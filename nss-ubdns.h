@@ -44,9 +44,21 @@
 #include <inttypes.h>
 #include <time.h>
 
+#ifndef NSS_UBDNS_LUCONF
 #define NSS_UBDNS_LUCONF	"/etc/nss-ubdns/libunbound.conf"
+#endif
+#ifndef NSS_UBDNS_KEYDIR
 #define NSS_UBDNS_KEYDIR	"/etc/nss-ubdns/keys"
+#endif
+#ifndef NSS_UBDNS_RESOLVCONF
 #define NSS_UBDNS_RESOLVCONF	"/etc/resolv.conf"
+#endif
+#ifndef NSS_UBDNS_MINIMAL
+#define NSS_UBDNS_MINIMAL	0
+#endif
+#ifndef NSS_UBDNS_MINIMAL_DOMAIN
+#define NSS_UBDNS_MINIMAL_DOMAIN "lb-pool"
+#endif
 
 #define NSS_UBDNS_PRESLEN_NAME	1025
 #define NSS_UBDNS_TYPE_A	1

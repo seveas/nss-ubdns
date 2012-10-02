@@ -109,6 +109,15 @@ enum nss_status _nss_ubdns_gethostbyname4_r(
 	struct address *addresses = NULL, *a;
 	unsigned n_addresses = 0, n;
 
+#if NSS_UBDNS_MINIMAL
+	/* Only look up names ending in NSS_UBDNS_MINIMAL_DOMAIN */
+	if(strstr(hn, NSS_UBDNS_MINIMAL_DOMAIN) - hn != strlen(hn) - sizeof(NSS_UBDNS_MINIMAL_DOMAIN) + 1) {
+		*errnop = EINVAL;
+		*h_errnop = NO_RECOVERY;
+		return NSS_STATUS_UNAVAIL;
+	}
+#endif
+
 	/* If this fails, n_addresses is 0. Which is fine */
 	nss_ubdns_lookup_forward(hn, AF_UNSPEC, &addresses, &n_addresses);
 	if (n_addresses == 0) {
@@ -172,6 +181,18 @@ enum nss_status _nss_ubdns_gethostbyname3_r(
 	struct address *addresses = NULL, *a;
 	unsigned n_addresses = 0, n, c;
 	unsigned i = 0;
+    puts("Oink");
+
+#if NSS_UBDNS_MINIMAL
+    puts("Yikes");
+    printf("%d %d %d %d | %d %d\n", strstr(hn, NSS_UBDNS_MINIMAL_DOMAIN), hn, strlen(hn), sizeof(NSS_UBDNS_MINIMAL_DOMAIN), strstr(hn, NSS_UBDNS_MINIMAL_DOMAIN) - hn, strlen(hn) - sizeof(NSS_UBDNS_MINIMAL_DOMAIN));
+	/* Only look up names ending in NSS_UBDNS_MINIMAL_DOMAIN */
+	if(strstr(hn, NSS_UBDNS_MINIMAL_DOMAIN) - hn != strlen(hn) - sizeof(NSS_UBDNS_MINIMAL_DOMAIN) + 1) {
+		*errnop = EINVAL;
+		*h_errnop = NO_RECOVERY;
+		return NSS_STATUS_UNAVAIL;
+	}
+#endif
 
 	if (af != AF_INET && af != AF_INET6) {
 		*errnop = EAFNOSUPPORT;
@@ -305,6 +326,11 @@ enum nss_status _nss_ubdns_gethostbyaddr2_r(
 		int *errnop, int *h_errnop,
 		int32_t *ttlp)
 {
+#if NSS_UBDNS_MINIMAL
+	*errnop = EINVAL;
+	*h_errnop = NO_RECOVERY;
+	return NSS_STATUS_UNAVAIL;
+#else
 	char *hn = NULL;
 	char *r_name, *r_addr, *r_aliases, *r_addr_list;
 	size_t l, idx, ms, alen;
@@ -380,6 +406,7 @@ enum nss_status _nss_ubdns_gethostbyaddr2_r(
 	free(hn);
 
 	return (NSS_STATUS_SUCCESS);
+#endif
 }
 
 enum nss_status _nss_ubdns_gethostbyaddr_r(
@@ -389,6 +416,11 @@ enum nss_status _nss_ubdns_gethostbyaddr_r(
 		char *buffer, size_t buflen,
 		int *errnop, int *h_errnop)
 {
+#if NSS_UBDNS_MINIMAL
+	*errnop = EINVAL;
+	*h_errnop = NO_RECOVERY;
+	return NSS_STATUS_UNAVAIL;
+#else
 	return _nss_ubdns_gethostbyaddr2_r(
 			addr, len,
 			af,
@@ -396,4 +428,5 @@ enum nss_status _nss_ubdns_gethostbyaddr_r(
 			buffer, buflen,
 			errnop, h_errnop,
 			NULL);
+#endif
 }

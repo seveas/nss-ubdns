@@ -35,6 +35,7 @@
 
 static struct ub_ctx *ctx = NULL;
 
+#if !NSS_UBDNS_MINIMAL
 static void
 nss_ubdns_load_keys(void) {
 	DIR *dirp;
@@ -97,6 +98,7 @@ nss_ubdns_load_keys(void) {
 	}
 	closedir(dirp);
 }
+#endif
 
 static void
 nss_ubdns_load_cfg(void) {
@@ -123,7 +125,9 @@ nss_ubdns_init(void) {
 		ub_ctx_debugout(ctx, NULL);
 
 		nss_ubdns_load_resolvconf();
+#if !NSS_UBDNS_MINIMAL
 		nss_ubdns_load_keys();
+#endif
 		nss_ubdns_load_cfg();
 	}
 }
@@ -192,8 +196,6 @@ nss_ubdns_lookup_forward(const char *hn, int af, struct address **_list, unsigne
 		ret = nss_ubdns_add_result(&list, &n_list, res, AF_INET);
 		if (ret != 0)
 			goto err;
-
-		ub_resolve_free(res);
 	}
 
 	if (af == AF_INET6 || af == AF_UNSPEC) {
@@ -204,11 +206,10 @@ nss_ubdns_lookup_forward(const char *hn, int af, struct address **_list, unsigne
 		ret = nss_ubdns_add_result(&list, &n_list, res, AF_INET6);
 		if (ret != 0)
 			goto err;
-
-		ub_resolve_free(res);
 	}
 
 finish:
+	ub_resolve_free(res);
 	if (r < 0) {
 		free(list);
 	} else {
@@ -224,6 +225,7 @@ err:
 	goto finish;
 }
 
+#if !NSS_UBDNS_MINIMAL
 char *
 nss_ubdns_lookup_reverse(const void *addr, int af) {
 	struct ub_result *res = NULL;
@@ -258,3 +260,4 @@ nss_ubdns_lookup_reverse(const void *addr, int af) {
 
 	return (NULL);
 }
+#endif
