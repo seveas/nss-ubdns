@@ -52,12 +52,14 @@
 
 #define ALIGN(a) (((a+sizeof(void*)-1)/sizeof(void*))*sizeof(void*))
 
+#ifdef HAVE_GETHOSTBYNAME4
 enum nss_status _nss_ubdns_gethostbyname4_r(
 		const char *name,
 		struct gaih_addrtuple **pat,
 		char *buffer, size_t buflen,
 		int *errnop, int *h_errnop,
 		int32_t *ttlp);
+#endif
 
 enum nss_status _nss_ubdns_gethostbyname3_r(
 		const char *name,
@@ -96,6 +98,7 @@ enum nss_status _nss_ubdns_gethostbyaddr_r(
 		char *buffer, size_t buflen,
 		int *errnop, int *h_errnop);
 
+#ifdef HAVE_GETHOSTBYNAME4
 enum nss_status _nss_ubdns_gethostbyname4_r(
 		const char *hn,
 		struct gaih_addrtuple **pat,
@@ -156,6 +159,7 @@ enum nss_status _nss_ubdns_gethostbyname4_r(
 
 	return NSS_STATUS_SUCCESS;
 }
+#endif
 
 enum nss_status _nss_ubdns_gethostbyname3_r(
 		const char *hn,

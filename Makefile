@@ -6,6 +6,10 @@ LIBDIRS ?=
 
 CC = gcc
 CFLAGS = --std=gnu99 -fPIC -O2 -g -ggdb -Wall
+ifneq (, $(findstring gaih_addrtuple, $(shell grep gaih_addrtuple /usr/include/nss.h)))
+CFLAGS += -DHAVE_GETHOSTBYNAME4=1
+endif
+
 LDFLAGS = -l$(LIBUNBOUND) $(LIBDIRS)
 STATIC_LDFLAGS = -Wl,-Bstatic -l$(LIBUNBOUND) -lldns -Wl,-Bdynamic -lcrypto -lpthread $(LIBDIRS)
 
